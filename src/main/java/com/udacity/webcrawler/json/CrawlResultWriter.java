@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Objects;
 
 /**
@@ -33,7 +35,8 @@ public final class CrawlResultWriter {
   public void write(Path path) {
     // This is here to get rid of the unused variable warning.
     Objects.requireNonNull(path);
-    try (Writer writer = Files.newBufferedWriter(path)) {
+    try (Writer writer = Files.newBufferedWriter(path,StandardCharsets.UTF_8,
+            StandardOpenOption.APPEND, StandardOpenOption.CREATE)) {
       write(writer);
     } catch (IOException e) {
       e.printStackTrace();

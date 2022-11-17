@@ -23,9 +23,9 @@ final class ParallelWebCrawler implements WebCrawler {
   private final Duration timeout;
   private final int popularWordCount;
   private final ForkJoinPool pool;
-  private int maxDepth;
-  private PageParserFactory parserFactory;
-  private List<Pattern> ignoredUrl;
+  private final int maxDepth;
+  private final PageParserFactory parserFactory;
+  private final List<Pattern> ignoredUrl;
   @Inject
   ParallelWebCrawler(
       Clock clock,
@@ -65,11 +65,11 @@ final class ParallelWebCrawler implements WebCrawler {
   }
 
   public class InternalCrawler extends RecursiveTask<Boolean> {
-    private String url;
-    private Instant deadline;
-    private int maxDepth;
-    private ConcurrentMap<String, Integer> counts;
-    private ConcurrentSkipListSet<String> visitedUrl;
+    private final String url;
+    private final Instant deadline;
+    private final int maxDepth;
+    private final ConcurrentMap<String, Integer> counts;
+    private final ConcurrentSkipListSet<String> visitedUrl;
 
     public InternalCrawler(String url, Instant deadline, int maxDepth,
                            ConcurrentMap<String, Integer> counts,
@@ -91,10 +91,9 @@ final class ParallelWebCrawler implements WebCrawler {
           return false;
         }
       }
-      if (visitedUrl.contains(url)){
+      if (!visitedUrl.add(url)){
         return false;
       }
-      visitedUrl.add(url);
       PageParser.Result result = parserFactory.get(url).parse();
 
       for (Map.Entry<String, Integer> e: result.getWordCounts().entrySet()) {

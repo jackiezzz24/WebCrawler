@@ -42,17 +42,20 @@ public final class WebCrawlerMain {
       Path path = Paths.get(config.getResultPath());
       resultWriter.write(path);
     } else {
-      Writer outputWriter = new OutputStreamWriter(System.out);
-      resultWriter.write(outputWriter);
+      try(Writer outputWriter = new OutputStreamWriter(System.out)){
+        resultWriter.write(outputWriter);
+      }
+
     }
     // Write the profile data to a text file (or System.out if the file name is empty)
     if (!config.getProfileOutputPath().isEmpty()) {
       Path path = Paths.get(config.getProfileOutputPath());
       profiler.writeData(path);
     } else {
-      Writer outputWriter = new OutputStreamWriter(System.out);
-      profiler.writeData(outputWriter);
-      outputWriter.flush();
+      try(Writer outputWriter = new OutputStreamWriter(System.out)) {
+        profiler.writeData(outputWriter);
+        outputWriter.flush();
+      }
     }
   }
 
